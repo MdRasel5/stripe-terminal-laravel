@@ -23,3 +23,4 @@ Route::get('/readers', [StripeController::class, 'listReaders']);
 Route::post('/readers/process-payment', [StripeController::class, 'processPayment']);
 Route::post('/readers/simulate-payment', [StripeController::class, 'simulatePayment']);
 Route::post('/payments/capture', [StripeController::class, 'capturePayment']);
+Route::post('/payments/cancel-payment', [StripeController::class, 'cancelPayment']);

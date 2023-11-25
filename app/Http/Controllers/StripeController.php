@@ -94,4 +94,23 @@ class StripeController extends Controller
             return response()->json(['error' => ['message' => $e->getMessage()]]);
         }
     }
+
+    public function cancelPayment(Request $request)
+    {
+        try {
+            Stripe::setApiKey(config('services.stripe.secret'));
+
+            $readerId = $request->input('readerId');
+
+            // Retrieve the Reader by ID
+            $reader = Reader::retrieve($readerId);
+
+            // Cancel the action on the specified reader
+            $canceledReader = $reader->cancelAction();
+
+            return response()->json(['reader' => $canceledReader]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => ['message' => $e->getMessage()]]);
+        }
+    }
 }
