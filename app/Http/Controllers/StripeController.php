@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Stripe\Stripe;
 use Stripe\Terminal\Reader;
 use Stripe\PaymentIntent;
-use Stripe\TestHelper;
+use Stripe\Service\TestHelpers\Terminal\ReaderService;
 
 class StripeController extends Controller
 {
@@ -58,36 +58,19 @@ class StripeController extends Controller
         }
     }
 
-
-    // public function simulatePayment(Request $request)
-    // {
-    //     try {
-    //         Stripe::setApiKey(config('services.stripe.secret'));
-
-    //         $readerId = $request->input('readerId');
-
-    //         // Simulate a payment on the specified reader
-    //         $reader = TestHelper::terminal()->readers->presentPaymentMethod($readerId);
-
-    //         return response()->json(['reader' => $reader]);
-    //     } catch (\Exception $e) {
-    //         return response()->json(['error' => ['message' => $e->getMessage()]]);
-    //     }
-    // }
-
     public function simulatePayment(Request $request)
     {
         try {
-            // Set the Stripe API key
             Stripe::setApiKey(config('services.stripe.secret'));
 
             $readerId = $request->input('readerId');
 
-            // Retrieve the reader by ID
-            $reader = CustomReader::retrieve($readerId);
+            // Assuming this is the correct way to create a Stripe client instance
+            $stripeClient = new \Stripe\StripeClient(config('services.stripe.secret'));
+            $readerService = new ReaderService($stripeClient);
 
-            // Simulate a payment on the specified reader (assuming simulate is a custom method)
-            $reader->simulatePayment(); // You need to define this method in your CustomReader class
+            // Simulate a payment on the specified reader
+            $reader = $readerService->presentPaymentMethod($readerId);
 
             return response()->json(['reader' => $reader]);
         } catch (\Exception $e) {
